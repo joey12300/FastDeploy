@@ -131,8 +131,24 @@ class EigenDeviceWrapper {
   const Eigen::DefaultDevice* GetDevice() const;
 
  private:
-  Eigen::DefaultDevice device_;
+  std::unique_ptr<Eigen::DefaultDevice> device_;
   static std::shared_ptr<EigenDeviceWrapper> instance_;
 };
+
+#ifdef WITH_GPU
+
+class EigenGpuStreamDevice;
+
+class EigenGpuDeviceWrapper {
+ public:
+  static std::shared_ptr<EigenGpuDeviceWrapper> GetInstance();
+  const Eigen::GpuDevice* GetDevice() const;
+
+ private:
+  std::unique_ptr<Eigen::GpuDevice> device_;
+  std::unique_ptr<EigenGpuStreamDevice> eigen_stream_;
+  static std::shared_ptr<EigenGpuDeviceWrapper> instance_;
+};
+#endif
 
 }  // namespace fastdeploy
