@@ -179,6 +179,11 @@ bool PaddleBackend::InitFromPaddle(const std::string& model_file,
     if (!CheckFileExists(shape_range_info)) {
       FDINFO << "Start generating shape range info file." << std::endl;
       paddle_infer::Config analysis_config;
+      // Need to enable int8 if it's a quantize model to generate shape range
+      // info file.
+      if (reader.is_quantize_model) {
+        analysis_config.EnableMkldnnInt8();
+      }
       if (option.model_from_memory_) {
         analysis_config.SetModelBuffer(
             model_file.c_str(), option.model_buffer_size_, params_file.c_str(),
